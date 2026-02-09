@@ -1,0 +1,507 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deeds of Light</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            background-image: url('pic_770_1.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        #background-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            grid-template-rows: repeat(10, 1fr);
+            z-index: -1;
+            transition: opacity 0.5s;
+        }
+
+        .grid-cell {
+            background: rgba(26, 26, 46, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.8s ease;
+        }
+
+        .grid-cell.lit {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.2);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            }
+            to {
+                box-shadow: 0 0 30px rgba(255, 215, 0, 0.9);
+            }
+        }
+
+        .container {
+            position: relative;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #1a1a2e;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        #total-counter {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin: 5px 0;
+        }
+
+        .progress-text {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .deeds-grid {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            margin: 80px auto 20px;
+        }
+
+        .deed-card {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            width: 160px;
+            left: 50%;
+            top: 50%;
+            margin-left: -80px;
+            margin-top: -80px;
+        }
+
+        /* Position cards like clock numbers */
+        .deed-card:nth-child(1) { /* 12 o'clock - Tefilin */
+            transform: translate(0, -280px);
+        }
+
+        .deed-card:nth-child(2) { /* 2 o'clock - Tzedakah */
+            transform: translate(240px, -140px);
+        }
+
+        .deed-card:nth-child(3) { /* 4 o'clock - Candles */
+            transform: translate(240px, 140px);
+        }
+
+        .deed-card:nth-child(4) { /* 6 o'clock - Shabbos */
+            transform: translate(0, 280px);
+        }
+
+        .deed-card:nth-child(5) { /* 8 o'clock - Mikvah */
+            transform: translate(-240px, 140px);
+        }
+
+        .deed-card:nth-child(6) { /* 10 o'clock - Kashrut */
+            transform: translate(-240px, -140px);
+        }
+
+
+        .deed-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+        }
+
+        .deed-description {
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+        }
+
+        .deed-counter {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-align: center;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 100px;
+            margin-bottom: 30px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            max-width: 250px;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            font-size: 2rem;
+            cursor: pointer;
+            color: #666;
+            background: none;
+            border: none;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            font-family: inherit;
+        }
+
+        .file-upload {
+            margin: 15px 0;
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .file-upload label {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .file-upload label:hover {
+            background: #d0d0d0;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.3rem;
+            }
+
+            #total-counter {
+                font-size: 1.5rem;
+            }
+
+            .deeds-grid {
+                width: 400px;
+                height: 400px;
+                margin: 40px auto 20px;
+            }
+
+            .deed-card {
+                width: 130px;
+                padding: 10px;
+                margin-left: -65px;
+                margin-top: -65px;
+            }
+
+            .deed-card:nth-child(1) {
+                transform: translate(0, -180px);
+            }
+
+            .deed-card:nth-child(2) {
+                transform: translate(156px, -90px);
+            }
+
+            .deed-card:nth-child(3) {
+                transform: translate(156px, 90px);
+            }
+
+            .deed-card:nth-child(4) {
+                transform: translate(0, 180px);
+            }
+
+            .deed-card:nth-child(5) {
+                transform: translate(-156px, 90px);
+            }
+
+            .deed-card:nth-child(6) {
+                transform: translate(-156px, -90px);
+            }
+
+
+            .deed-title {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="background-grid"></div>
+
+    <div class="container">
+        <header>
+            <h1>✨ Deeds of Light ✨</h1>
+            <div id="total-counter">0</div>
+            <p class="progress-text">Good deeds completed</p>
+        </header>
+
+        <div class="deeds-grid">
+            <div class="deed-card" data-deed="tefilin">
+                <div class="deed-title">🕍 Tefilin</div>
+                <div class="deed-description">Put on Tefilin and connect with tradition</div>
+                <div class="deed-counter">0</div>
+            </div>
+
+            <div class="deed-card" data-deed="tzedakah">
+                <div class="deed-title">💝 Tzedakah</div>
+                <div class="deed-description">Give charity and help others</div>
+                <div class="deed-counter">0</div>
+            </div>
+
+            <div class="deed-card" data-deed="candles">
+                <div class="deed-title">🕯️ Candles</div>
+                <div class="deed-description">Light Shabbat or Yom Tov candles</div>
+                <div class="deed-counter">0</div>
+            </div>
+
+            <div class="deed-card" data-deed="shabbos">
+                <div class="deed-title">⭐ Shabbos</div>
+                <div class="deed-description">Keep and honor the Shabbat</div>
+                <div class="deed-counter">0</div>
+            </div>
+
+            <div class="deed-card" data-deed="mikvah">
+                <div class="deed-title">💧 Mikvah</div>
+                <div class="deed-description">Immerse in the Mikvah</div>
+                <div class="deed-counter">0</div>
+            </div>
+
+            <div class="deed-card" data-deed="kashrut">
+                <div class="deed-title">🍽️ Kashrut</div>
+                <div class="deed-description">Keep kosher and eat according to halacha</div>
+                <div class="deed-counter">0</div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="openStoryModal()">📖 Share Your Story</button>
+            <a href="#" class="btn btn-secondary" id="donate-link">❤️ Donate</a>
+        </div>
+    </div>
+
+    <div id="story-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Share Your Story</h2>
+                <button class="close-btn" onclick="closeStoryModal()">&times;</button>
+            </div>
+            <textarea placeholder="Write your story here..." id="story-text"></textarea>
+            
+            <div class="file-upload">
+                <label for="audio-upload">🎤 Upload Audio</label>
+                <input type="file" id="audio-upload" accept="audio/*">
+            </div>
+            
+            <div class="file-upload">
+                <label for="video-upload">🎥 Upload Video</label>
+                <input type="file" id="video-upload" accept="video/*">
+            </div>
+            
+            <button class="btn btn-primary" onclick="submitStory()">Submit Story</button>
+        </div>
+    </div>
+
+    <script>
+        const state = {
+            totalDeeds: 0,
+            deeds: {
+                tefilin: 0,
+                tzedakah: 0,
+                candles: 0,
+                shabbos: 0,
+                mikvah: 0,
+                kashrut: 0
+            },
+            currentLevel: 100,
+            litCells: 0
+        };
+
+        function initGrid() {
+            const grid = document.getElementById('background-grid');
+            const cellCount = state.currentLevel;
+            const cols = state.currentLevel === 100 ? 10 : 32;
+            
+            grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+            grid.style.gridTemplateRows = `repeat(${Math.ceil(cellCount / cols)}, 1fr)`;
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < cellCount; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'grid-cell';
+                if (i < state.litCells) {
+                    cell.classList.add('lit');
+                }
+                grid.appendChild(cell);
+            }
+        }
+
+        function lightUpCell() {
+            const cells = document.querySelectorAll('.grid-cell:not(.lit)');
+            if (cells.length > 0) {
+                const randomIndex = Math.floor(Math.random() * cells.length);
+                cells[randomIndex].classList.add('lit');
+                state.litCells++;
+
+                if (state.litCells === 100 && state.currentLevel === 100) {
+                    setTimeout(() => {
+                        state.currentLevel = 1000;
+                        state.litCells = 100;
+                        initGrid();
+                    }, 1000);
+                }
+            }
+        }
+
+        document.querySelectorAll('.deed-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const deedType = this.dataset.deed;
+                state.deeds[deedType]++;
+                state.totalDeeds++;
+
+                this.querySelector('.deed-counter').textContent = state.deeds[deedType];
+                document.getElementById('total-counter').textContent = state.totalDeeds;
+
+                lightUpCell();
+            });
+        });
+
+        function openStoryModal() {
+            document.getElementById('story-modal').classList.add('active');
+        }
+
+        function closeStoryModal() {
+            document.getElementById('story-modal').classList.remove('active');
+        }
+
+        function submitStory() {
+            const text = document.getElementById('story-text').value;
+            const audio = document.getElementById('audio-upload').files[0];
+            const video = document.getElementById('video-upload').files[0];
+            
+            if (text || audio || video) {
+                alert('Thank you for sharing your story! (In production, this would be saved to a backend)');
+                closeStoryModal();
+                document.getElementById('story-text').value = '';
+                document.getElementById('audio-upload').value = '';
+                document.getElementById('video-upload').value = '';
+            } else {
+                alert('Please write a story or upload a file.');
+            }
+        }
+
+        initGrid();
+    </script>
+</body>
+</html>
