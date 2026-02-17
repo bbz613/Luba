@@ -27,32 +27,23 @@
             left: 0;
             width: 100%;
             height: 100%;
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            grid-template-rows: repeat(10, 1fr);
             z-index: -1;
-            transition: opacity 0.5s;
         }
 
-        .grid-cell {
+        .puzzle-piece {
+            position: absolute;
             background: rgba(26, 26, 46, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.05);
             transition: all 0.8s ease;
+            clip-path: polygon(
+                10% 0%, 40% 0%, 40% 8%, 50% 8%, 60% 0%, 60% 0%, 90% 0%,
+                100% 10%, 100% 40%, 92% 40%, 92% 50%, 100% 60%, 100% 90%,
+                90% 100%, 60% 100%, 60% 92%, 50% 92%, 40% 100%, 10% 100%,
+                0% 90%, 0% 60%, 8% 60%, 8% 50%, 0% 40%, 0% 10%
+            );
         }
 
-        .grid-cell.lit {
-            background: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), inset 0 0 30px rgba(255, 255, 255, 0.2);
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes glow {
-            from {
-                box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-            }
-            to {
-                box-shadow: 0 0 30px rgba(255, 215, 0, 0.9);
-            }
+        .puzzle-piece.lit {
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .container {
@@ -375,6 +366,11 @@
     </div>
 
     <script>
+        const backgrounds = [
+            'pic_770_1.png',
+            'Screenshot 2026-02-09 at 21.00.34.png'
+        ];
+
         const state = {
             totalDeeds: 0,
             deeds: {
@@ -385,41 +381,46 @@
                 challa: 0,
                 kashrut: 0
             },
-            currentLevel: 100,
-            litCells: 0
+            litCells: 0,
+            currentBg: 0
         };
 
         function initGrid() {
             const grid = document.getElementById('background-grid');
-            const cellCount = state.currentLevel;
-            const cols = state.currentLevel === 100 ? 10 : 32;
-            
-            grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-            grid.style.gridTemplateRows = `repeat(${Math.ceil(cellCount / cols)}, 1fr)`;
             grid.innerHTML = '';
-            
-            for (let i = 0; i < cellCount; i++) {
-                const cell = document.createElement('div');
-                cell.className = 'grid-cell';
-                if (i < state.litCells) {
-                    cell.classList.add('lit');
+
+            const cols = 6;
+            const rows = 3;
+            const pieceW = 100 / cols;
+            const pieceH = 100 / rows;
+            const overlap = 2;
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const piece = document.createElement('div');
+                    piece.className = 'puzzle-piece';
+                    piece.style.left = (c * pieceW - overlap) + '%';
+                    piece.style.top = (r * pieceH - overlap) + '%';
+                    piece.style.width = (pieceW + overlap * 2) + '%';
+                    piece.style.height = (pieceH + overlap * 2) + '%';
+                    grid.appendChild(piece);
                 }
-                grid.appendChild(cell);
             }
         }
 
         function lightUpCell() {
-            const cells = document.querySelectorAll('.grid-cell:not(.lit)');
+            const cells = document.querySelectorAll('.puzzle-piece:not(.lit)');
             if (cells.length > 0) {
                 const randomIndex = Math.floor(Math.random() * cells.length);
                 cells[randomIndex].classList.add('lit');
                 state.litCells++;
 
-                if (state.litCells === 100 && state.currentLevel === 100) {
+                if (state.litCells >= 18) {
                     setTimeout(() => {
-                        state.currentLevel = 1000;
-                        state.litCells = 100;
-                        initGrid();
+                        state.currentBg = (state.currentBg + 1) % backgrounds.length;
+                        document.body.style.backgroundImage = "url('" + backgrounds[state.currentBg] + "')";
+                        state.litCells = 0;
+                        document.querySelectorAll('.puzzle-piece').forEach(p => p.classList.remove('lit'));
                     }, 1000);
                 }
             }
