@@ -34,7 +34,7 @@
             position: absolute;
             background: rgba(26, 26, 46, 0.6);
             transition: all 0.8s ease;
-            clip-path: url(#puzzleClip);
+            border-radius: 12px;
         }
 
         .puzzle-piece.lit {
@@ -285,13 +285,6 @@
     </style>
 </head>
 <body>
-    <svg width="0" height="0">
-        <defs>
-            <clipPath id="puzzleClip" clipPathUnits="objectBoundingBox">
-                <path d="M 0.05 0 C 0.15 0, 0.3 0, 0.37 0 C 0.37 0.06, 0.41 0.1, 0.5 0.1 C 0.59 0.1, 0.63 0.06, 0.63 0 C 0.7 0, 0.85 0, 0.95 0 C 1 0.05, 1 0.15, 1 0.37 C 0.94 0.37, 0.9 0.41, 0.9 0.5 C 0.9 0.59, 0.94 0.63, 1 0.63 C 1 0.7, 1 0.85, 1 0.95 C 0.95 1, 0.85 1, 0.63 1 C 0.63 0.94, 0.59 0.9, 0.5 0.9 C 0.41 0.9, 0.37 0.94, 0.37 1 C 0.3 1, 0.15 1, 0.05 1 C 0 0.95, 0 0.85, 0 0.63 C 0.06 0.63, 0.1 0.59, 0.1 0.5 C 0.1 0.41, 0.06 0.37, 0 0.37 C 0 0.15, 0 0.05, 0.05 0 Z"/>
-            </clipPath>
-        </defs>
-    </svg>
     <div id="background-grid"></div>
 
     <div class="container">
@@ -393,18 +386,18 @@
 
             const cols = 6;
             const rows = 6;
-            const pieceW = 100 / cols;
-            const pieceH = 100 / rows;
-            const overlap = 2;
+            const gap = 0.3;
+            const pieceW = (100 - gap * (cols + 1)) / cols;
+            const pieceH = (100 - gap * (rows + 1)) / rows;
 
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < cols; c++) {
                     const piece = document.createElement('div');
                     piece.className = 'puzzle-piece';
-                    piece.style.left = (c * pieceW - overlap) + '%';
-                    piece.style.top = (r * pieceH - overlap) + '%';
-                    piece.style.width = (pieceW + overlap * 2) + '%';
-                    piece.style.height = (pieceH + overlap * 2) + '%';
+                    piece.style.left = (gap + c * (pieceW + gap)) + '%';
+                    piece.style.top = (gap + r * (pieceH + gap)) + '%';
+                    piece.style.width = pieceW + '%';
+                    piece.style.height = pieceH + '%';
                     grid.appendChild(piece);
                 }
             }
