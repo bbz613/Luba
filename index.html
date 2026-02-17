@@ -99,9 +99,9 @@
         .deeds-grid {
             position: relative;
             width: 90vw;
-            height: 90vw;
+            height: 120vw;
             max-width: 600px;
-            max-height: 600px;
+            max-height: 800px;
             margin: 80px auto 20px;
         }
 
@@ -311,37 +311,37 @@
             <div class="deed-card deed-card-img" data-deed="tefilin">
                 <div class="deed-label" style="color: #7B68EE">Tefilin</div>
                 <img src="teffilin_button.png?v=2" alt="Tefilin" class="deed-img">
-                <div class="deed-counter">0</div>
+                <div class="deed-counter" style="color: #7B68EE">0</div>
             </div>
 
             <div class="deed-card deed-card-img" data-deed="tzedakah">
                 <div class="deed-label" style="color: #6A5ACD">Tzedakah</div>
                 <img src="zdaka_button.png" alt="Tzedakah" class="deed-img" style="width:60%">
-                <div class="deed-counter">0</div>
+                <div class="deed-counter" style="color: #6A5ACD">0</div>
             </div>
 
             <div class="deed-card deed-card-img" data-deed="candles">
                 <div class="deed-label" style="color: #87CEEB">Candles</div>
                 <img src="cadles_button.png?v=2" alt="Candles" class="deed-img">
-                <div class="deed-counter">0</div>
+                <div class="deed-counter" style="color: #87CEEB">0</div>
             </div>
 
             <div class="deed-card deed-card-img" data-deed="shabbos">
                 <div class="deed-label" style="color: #9370DB">Shabbos</div>
                 <img src="shabbes_button.jpeg" alt="Shabbos" class="deed-img">
-                <div class="deed-counter">0</div>
+                <div class="deed-counter" style="color: #9370DB">0</div>
             </div>
 
             <div class="deed-card deed-card-img" data-deed="challa">
                 <div class="deed-label" style="color: #00BFFF">Challa</div>
                 <img src="chala_button.png?v=2" alt="Challa" class="deed-img">
-                <div class="deed-counter">0</div>
+                <div class="deed-counter" style="color: #00BFFF">0</div>
             </div>
 
             <div class="deed-card deed-card-img" data-deed="kashrut">
                 <div class="deed-label" style="color: #8A2BE2">Kosher</div>
                 <img src="kosher_button.png?v=2" alt="Kashrut" class="deed-img">
-                <div class="deed-counter">0</div>
+                <div class="deed-counter" style="color: #8A2BE2">0</div>
             </div>
         </div>
 
@@ -473,19 +473,16 @@
                 card.style.width = cardWidth + 'px';
             });
 
-            // Calculate radius so cards stay within screen bounds
-            const maxRadius = Math.min(
-                (screenWidth / 2) - (cardWidth / 2) - 15,
-                (grid.offsetHeight / 2) - 10
-            );
-            const radius = Math.min(maxRadius, grid.offsetWidth * 0.47);
+            // Calculate radii so cards stay within screen bounds (ellipse: taller than wide)
+            const radiusX = Math.min((screenWidth / 2) - (cardWidth / 2) - 15, grid.offsetWidth * 0.42);
+            const radiusY = Math.min((grid.offsetHeight / 2) - 10, grid.offsetHeight * 0.45);
 
             const angles = [270, 330, 30, 90, 150, 210]; // clock: 12, 2, 4, 6, 8, 10
 
             cards.forEach((card, i) => {
                 const angle = angles[i] * (Math.PI / 180);
-                const x = Math.cos(angle) * radius;
-                const y = Math.sin(angle) * radius;
+                const x = Math.cos(angle) * radiusX;
+                const y = Math.sin(angle) * radiusY;
                 const w = card.offsetWidth;
                 const h = card.offsetHeight;
                 card.style.marginLeft = -w / 2 + 'px';
